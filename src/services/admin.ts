@@ -31,16 +31,16 @@ export async function getAllFiles(): Promise<AdminFileItem[]> {
     .from("files")
     .select(`
       id,
-      filename,
+      fileName,
       path,
       url,
       size,
       type,
       user_id,
-      created_at,
-      downloadcount
+      uploadedAt,
+      downloadCount
     `)
-    .order('created_at', { ascending: false });
+    .order('uploadedAt', { ascending: false });
 
   if (error) {
     console.error("Error fetching files:", error);
@@ -51,9 +51,9 @@ export async function getAllFiles(): Promise<AdminFileItem[]> {
 
   return data.map(file => ({
     id: file.id,
-    fileName: file.filename,
-    uploadedAt: new Date(file.created_at).toLocaleString('es-ES'),
-    downloadCount: file.downloadcount || 0,
+    fileName: file.fileName,
+    uploadedAt: new Date(file.uploadedAt).toLocaleString('es-ES'),
+    downloadCount: file.downloadCount || 0,
     status: "Subido",
     userId: file.user_id,
     size: file.size || 0,
@@ -68,7 +68,7 @@ export async function getAllUsers(): Promise<AdminUserProfile[]> {
   const { data, error } = await supabase
     .from("profiles")
     .select("*")
-    .order('createdat', { ascending: false });
+    .order('createdAt', { ascending: false });
 
   if (error) {
     console.error("Error fetching users:", error);
@@ -123,18 +123,18 @@ export async function getSystemStats() {
     // Obtener archivos para calcular tamaño total y descargas
     const { data: filesData, error: filesError } = await supabase
       .from("files")
-      .select("size, downloadcount, created_at");
+      .select("size, downloadCount, uploadedAt");
 
     if (filesError) throw filesError;
 
     const totalSize = filesData?.reduce((sum, file) => sum + (file.size || 0), 0) || 0;
-    const totalDownloads = filesData?.reduce((sum, file) => sum + (file.downloadcount || 0), 0) || 0;
+    const totalDownloads = filesData?.reduce((sum, file) => sum + (file.downloadCount || 0), 0) || 0;
 
     // Archivos recientes (última semana)
     const weekAgo = new Date();
     weekAgo.setDate(weekAgo.getDate() - 7);
     const recentFiles = filesData?.filter(file => 
-      new Date(file.created_at) > weekAgo
+      new Date(file.uploadedAt) > weekAgo
     ).length || 0;
 
     return {
@@ -156,12 +156,11 @@ export async function getRecentActivity() {
     .from("files")
     .select(`
       id,
-      filename,
-      created_at,
-      user_id,
-      profiles!inner(fullname, email)
+      fileName,
+      uploadedAt,
+      user_id
     `)
-    .order('created_at', { ascending: false })
+    .order('uploadedAt', { ascending: false })
     .limit(10);
 
   if (error) {
@@ -169,5 +168,21 @@ export async function getRecentActivity() {
     throw error;
   }
 
-  return data || [];
+  // Obtener información de usuarios por separado
+  const filesWithUsers = await Promise.all(
+    (data || []).map(async (file) => {
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("fullname, email")
+        .eq("id", file.user_id)
+        .single();
+      
+      return {
+        ...file,
+        profiles: profile
+      };
+    })
+  );
+
+  return filesWithUsers;
 }

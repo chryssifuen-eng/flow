@@ -48,19 +48,19 @@ export const FilesProvider = ({ children }: FilesProviderProps) => {
           .from("files")
           .select("*")
           .eq("user_id", user.id)
-          .order('created_at', { ascending: false });
+          .order('uploadedAt', { ascending: false });
 
         if (error) throw error;
 
         const userFiles = (data || []).map(file => ({
           id: file.id,
-          fileName: file.filename,
-          uploadedAt: new Date(file.created_at).toLocaleString('es-ES'),
+          fileName: file.fileName,
+          uploadedAt: new Date(file.uploadedAt).toLocaleString('es-ES'),
           url: file.url,
           path: file.path,
           size: file.size || 0,
           type: file.type || 'other',
-          downloadCount: file.downloadcount || 0
+          downloadCount: file.downloadCount || 0
         }));
 
         setFiles(userFiles);
