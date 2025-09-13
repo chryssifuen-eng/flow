@@ -9,41 +9,6 @@ export type Json =
 export interface Database {
   public: {
     Tables: {
-      files: {
-        Row: {
-          id: string;
-          fileName: string;
-          path: string;
-          url: string;
-          size: number;
-          type: string;
-          user_id: string;
-          uploadedAt: string;
-          downloadCount: number;
-        };
-        Insert: {
-          id: string;
-          fileName: string;
-          path: string;
-          url: string;
-          size?: number;
-          type?: string;
-          user_id: string;
-          uploadedAt?: string;
-          downloadCount?: number;
-        };
-        Update: {
-          id?: string;
-          fileName?: string;
-          path?: string;
-          url?: string;
-          size?: number;
-          type?: string;
-          user_id?: string;
-          uploadedAt?: string;
-          downloadCount?: number;
-        };
-      };
       profiles: {
         Row: {
           id: string;
@@ -54,7 +19,7 @@ export interface Database {
           zone: string;
           phone: string;
           role: string;
-          createdAt: string; // debe ser string, no Date
+          createdat: string; // debe ser string, no Date
         };
         Insert: {
           id: string;
@@ -65,7 +30,7 @@ export interface Database {
           zone: string;
           phone: string;
           role?: string;
-          createdAt?: string;
+          createdat?: string;
         };
         Update: {
           id?: string;
@@ -76,7 +41,7 @@ export interface Database {
           zone?: string;
           phone?: string;
           role?: string;
-          createdAt?: string;
+          createdat?: string;
         };
       };
     };

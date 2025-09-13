@@ -50,7 +50,7 @@ export async function registerUser(form: RegisterForm): Promise<UserProfile> {
         phone:            phone,
         email:            email,
         role:             "user",
-        createdAt:        new Date()            // o elimínalo si tienes DEFAULT now()
+        createdat:        new Date()            // o elimínalo si tienes DEFAULT now()
       }
     ])
     .select()
@@ -59,7 +59,7 @@ export async function registerUser(form: RegisterForm): Promise<UserProfile> {
   if (profileError) throw profileError;
   return {
     ...profile,
-    createdAt: new Date(profile.createdAt),
+    createdat: new Date(profile.createdat),
     role: profile.role as UserProfile["role"],
   };
 }
@@ -84,7 +84,7 @@ export async function loginUser(email: string, password: string): Promise<UserPr
   // 3) Convertir a tipo UserProfile
   return {
     ...profileRow,
-    createdAt: new Date(profileRow.createdAt),
+    createdat: new Date(profileRow.createdat),
     role: profileRow.role as UserProfile["role"],
   };
   

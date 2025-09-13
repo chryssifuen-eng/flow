@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect, useContext, ReactNode } from 'react';
 import { supabase } from '../services/supabase';
+import { getUserFiles } from '../services/files';
 
 // 1. Define la interfaz de los datos de un archivo.
 interface FileData {
@@ -43,26 +44,7 @@ export const FilesProvider = ({ children }: FilesProviderProps) => {
       setLoading(true);
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
-        // Obtener archivos directamente desde la tabla 'files'
-        const { data, error } = await supabase
-          .from("files")
-          .select("*")
-          .eq("user_id", user.id)
-          .order('uploadedAt', { ascending: false });
-
-        if (error) throw error;
-
-        const userFiles = (data || []).map(file => ({
-          id: file.id,
-          fileName: file.fileName,
-          uploadedAt: new Date(file.uploadedAt).toLocaleString('es-ES'),
-          url: file.url,
-          path: file.path,
-          size: file.size || 0,
-          type: file.type || 'other',
-          downloadCount: file.downloadCount || 0
-        }));
-
+        const userFiles = await getUserFiles(user.id);
         setFiles(userFiles);
       }
     } catch (error) {

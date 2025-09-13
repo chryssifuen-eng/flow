@@ -178,7 +178,7 @@ const handleDownload = async (file: FileItem) => {
       const { error: dbError } = await supabase
         .from("files")
         .update({
-          fileName: normalizedNewName,
+          filename: normalizedNewName,
           path: newPath,
           type: type,
           url: `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/uploads/${newPath}`,
@@ -319,13 +319,12 @@ const handleDownload = async (file: FileItem) => {
         // Insertar registro en tabla files con UUID
         const { error: insertError } = await supabase.from("files").insert({
           id: `${timestamp}_${sanitizedFileName}`, // Usar timestamp + nombre como ID
-          fileName: uf.file.name,
+          filename: uf.file.name,
           path: data.path,
           url: `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/uploads/${data.path}`,
           size: uf.file.size,
           type,
-          user_id: user.id,
-          uploadedAt: new Date().toISOString()
+          user_id: user.id
         });
         
         if (insertError) throw insertError;
