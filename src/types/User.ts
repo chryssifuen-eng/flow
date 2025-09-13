@@ -9,5 +9,5 @@ export interface UserProfile {
   zone: string;
   phone: string;
   role: UserRole;
-  createdat: Date;
+  createdAt: Date;
 }

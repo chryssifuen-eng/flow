@@ -617,7 +617,7 @@ export default function AdminDashboard() {
                         </span>
                       </div>
                       <p className="text-sm text-gray-600 mt-1">
-                        Usuario: {activity.profiles?.fullname} ({activity.profiles?.email})
+                        {formatDate(activity.uploadedAt)}
                       </p>
                       <div className="flex items-center mt-2 space-x-4 text-xs text-gray-500">
                         <span className="flex items-center">
